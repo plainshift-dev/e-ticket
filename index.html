@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Электронный билет</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      background: #f5f6fa;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* ---------- Экран загрузки ---------- */
+    #loader {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      text-align: center;
+      width: 100%;
+      max-width: 420px;
+    }
+
+    .spinner {
+      width: 56px;
+      height: 56px;
+      border: 5px solid #e0e3ea;
+      border-top-color: #2e6fdb;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin-bottom: 28px;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #message {
+      font-size: 18px;
+      color: #2c3e50;
+      font-weight: 500;
+      line-height: 1.5;
+      margin-bottom: 32px;
+    }
+
+    /* ---------- Прогресс-бар ---------- */
+    .progress-wrap {
+      width: 100%;
+      max-width: 300px;
+      height: 10px;
+      background: #e0e3ea;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    #progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #2e6fdb, #5a8ff0);
+      border-radius: 999px;
+      transition: width 0.1s linear;
+    }
+
+    #percent {
+      margin-top: 12px;
+      font-size: 14px;
+      color: #7f8c9b;
+    }
+
+    /* ---------- Готовый билет ---------- */
+    #ticket-view { display: none; text-align: center; width: 100%; padding: 16px; }
+
+    #ticket-view img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 4px 24px rgba(0, 0, 0, 0.12);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Экран загрузки -->
+  <div id="loader">
+    <div class="spinner"></div>
+    <p id="message">Подождите, идет формирование электронного билета</p>
+    <div class="progress-wrap">
+      <div id="progress-bar"></div>
+    </div>
+    <div id="percent">0%</div>
+  </div>
+
+  <!-- Экран с билетом -->
+  <div id="ticket-view">
+    <img id="ticket-img" src="e-ticket.jpg" alt="Электронный билет">
+  </div>
+
+  <script>
+    const DURATION_MS = 6000;   // длительность загрузки — 6 секунд
+    const TICK_MS    = 100;     // частота обновления прогресс-бара
+
+    const bar     = document.getElementById('progress-bar');
+    const percent = document.getElementById('percent');
+    const loader  = document.getElementById('loader');
+    const view    = document.getElementById('ticket-view');
+
+    let elapsed = 0;
+
+    const timer = setInterval(() => {
+      elapsed += TICK_MS;
+      const p = Math.min(100, Math.round((elapsed / DURATION_MS) * 100));
+      bar.style.width = p + '%';
+      percent.textContent = p + '%';
+
+      if (elapsed >= DURATION_MS) {
+        clearInterval(timer);
+        showTicket();
+      }
+    }, TICK_MS);
+
+    function showTicket() {
+      loader.style.display = 'none';
+      view.style.display = 'block';
+      // Прокручиваем к началу, чтобы билет открылся сверху
+      window.scrollTo(0, 0);
+    }
+  </script>
+</body>
+</html>
